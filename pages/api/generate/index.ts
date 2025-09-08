@@ -14,7 +14,7 @@ import {
   validateSize,
   checkContentSafety 
 } from '../../../lib/gen/prompt-assembly';
-import { bananaAPI } from '../../../lib/gen/banana-api';
+import { geminiAPI } from '../../../lib/gen/google-gemini-api';
 
 interface GenerateRequest {
   prompt: string;
@@ -240,8 +240,8 @@ async function processGenerationJob(jobId: string) {
       }
     });
 
-    // Call Banana API
-    const bananaResponse = await bananaAPI.generateImage({
+    // Call Google Gemini API
+    const geminiResponse = await geminiAPI.generateImage({
       prompt: job.prompt,
       style: job.style as any,
       size: job.size as any,
@@ -256,8 +256,8 @@ async function processGenerationJob(jobId: string) {
       }
     });
 
-    // Upload to Supabase (simplified - in real app, you'd upload the base64 image)
-    const imageUrl = `https://supabase-storage-url/${jobId}.png`;
+    // Use the image URL from Gemini response
+    const imageUrl = geminiResponse.imageB64;
 
     // Update job as successful
     await prisma.generationJob.update({
@@ -267,10 +267,10 @@ async function processGenerationJob(jobId: string) {
         progress: PROGRESS_CHECKPOINTS.DONE,
         finishedAt: new Date(),
         resultUrl: imageUrl,
-        resultImageB64: bananaResponse.imageB64,
-        model: bananaResponse.model,
-        generationTimeMs: bananaResponse.durationMs,
-        seed: bananaResponse.seed
+        resultImageB64: geminiResponse.imageB64,
+        model: geminiResponse.model,
+        generationTimeMs: geminiResponse.durationMs,
+        seed: geminiResponse.seed
       }
     });
 
@@ -286,7 +286,7 @@ async function processGenerationJob(jobId: string) {
         state: 'FAILED',
         finishedAt: new Date(),
         error: error instanceof Error ? error.message : 'Unknown error',
-        errorCode: ERROR_CODES.BANANA_ERROR
+        errorCode: ERROR_CODES.SERVER_ERROR
       }
     });
   }

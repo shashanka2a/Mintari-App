@@ -102,7 +102,7 @@ export const RETRY_CONFIG = {
 
 // Model information
 export const MODEL_INFO = {
-  NAME: 'stable-diffusion-xl',
-  VERSION: '1.0',
-  PROVIDER: 'banana',
+  NAME: 'gemini-1.5-flash',
+  VERSION: '1.5',
+  PROVIDER: 'google',
 } as const;

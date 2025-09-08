@@ -56,9 +56,9 @@ DATABASE_URL="your-supabase-database-url"
 NEXT_PUBLIC_SUPABASE_URL="your-supabase-url"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
 
-# AI Generation
-OPENAI_API_KEY="your-openai-api-key"
-REPLICATE_API_TOKEN="your-replicate-token"
+# AI Generation (Google Gemini API)
+GOOGLE_API_KEY="your-google-api-key"
+GOOGLE_GEMINI_MODEL="gemini-1.5-flash"
 
 # Blockchain (NFT Contract)
 ALCHEMY_API_KEY="your-alchemy-api-key"
@@ -98,7 +98,7 @@ npm run db:seed
 - **Backend**: Next.js API routes with Prisma ORM
 - **Database**: PostgreSQL (Supabase)
 - **Blockchain**: Base Sepolia (testnet) / Base (mainnet)
-- **AI**: OpenAI GPT-4 + Replicate for image generation
+- **AI**: Google Gemini API for Studio Ghibli-style image generation
 - **Storage**: AWS S3 for file storage
 - **UI Components**: Radix UI with custom styling
 

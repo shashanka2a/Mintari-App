@@ -8,6 +8,7 @@ import { ImageWithFallback } from './components/figma/ImageWithFallback';
 import { Sparkle } from './components/Sparkle';
 import PhotoUpload from './components/PhotoUpload';
 import { Toaster } from 'sonner';
+import { useGeneration } from './hooks/useGeneration';
 import exampleImage from './assets/aa07ce0034f6e4c889b68c05b1a06f573c134512.png';
 
 type Screen = 'home' | 'upload' | 'generation' | 'collection' | 'nft-mint' | 'checkout' | 'gallery';
@@ -15,14 +16,28 @@ type Screen = 'home' | 'upload' | 'generation' | 'collection' | 'nft-mint' | 'ch
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [generatedFrames, setGeneratedFrames] = useState<string[]>([]);
   const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generationProgress, setGenerationProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentTooltip, setCurrentTooltip] = useState(0);
   const [userId] = useState<string>('demo-user-123'); // In a real app, this would come from auth
+  
+  // Use the real generation hook
+  const { 
+    jobs, 
+    isGenerating, 
+    startGeneration, 
+    regenerateJob 
+  } = useGeneration({
+    onSuccess: (job) => {
+      console.log('Generation completed:', job);
+      navigate('generation');
+    },
+    onError: (error) => {
+      console.error('Generation failed:', error);
+      setError(error.message || 'Generation failed');
+    }
+  });
   const [collection, setCollection] = useState([
     {
       id: 1,
@@ -36,20 +51,12 @@ export default function App() {
   // Load saved state from localStorage on component mount
   useEffect(() => {
     const savedUploadedImage = localStorage.getItem('mintari-uploaded-image');
-    const savedGeneratedFrames = localStorage.getItem('mintari-generated-frames');
     const savedSelectedFrame = localStorage.getItem('mintari-selected-frame');
     const savedCollection = localStorage.getItem('mintari-collection');
     const hasSeenOnboarding = localStorage.getItem('mintari-onboarding-seen');
 
     if (savedUploadedImage) {
       setUploadedImage(savedUploadedImage);
-    }
-    if (savedGeneratedFrames) {
-      try {
-        setGeneratedFrames(JSON.parse(savedGeneratedFrames));
-      } catch (e) {
-        console.error('Failed to parse saved generated frames');
-      }
     }
     if (savedSelectedFrame) {
       setSelectedFrame(savedSelectedFrame);
@@ -77,13 +84,6 @@ export default function App() {
     }
   }, [uploadedImage]);
 
-  useEffect(() => {
-    if (generatedFrames.length > 0) {
-      localStorage.setItem('mintari-generated-frames', JSON.stringify(generatedFrames));
-    } else {
-      localStorage.removeItem('mintari-generated-frames');
-    }
-  }, [generatedFrames]);
 
   useEffect(() => {
     if (selectedFrame) {
@@ -168,39 +168,24 @@ export default function App() {
       return;
     }
 
-    setIsGenerating(true);
     setError(null);
-    setGenerationProgress(0);
 
     try {
-      // Simulate AI generation with progress updates
-      const progressSteps = [
-        { progress: 20, message: "Analyzing your photo..." },
-        { progress: 40, message: "Applying Ghibli magic..." },
-        { progress: 60, message: "Creating artistic variations..." },
-        { progress: 80, message: "Adding final touches..." },
-        { progress: 100, message: "Complete!" }
-      ];
-
-      for (const step of progressSteps) {
-        setGenerationProgress(step.progress);
-        await new Promise(resolve => setTimeout(resolve, 800)); // Simulate processing time
-      }
-
-      // Mock AI generation results
-      const mockFrames = [
-        "https://images.unsplash.com/photo-1610114586897-20495783e96c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkaW8lMjBnaGlibGklMjBhbmltZSUyMHN0eWxlJTIwbGFuZHNjYXBlfGVufDF8fHx8MTc1NzI4OTUyNXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-        "https://images.unsplash.com/photo-1610114586897-20495783e96c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkaW8lMjBnaGlibGklMjBhbmltZSUyMHN0eWxlJTIwbGFuZHNjYXBlfGVufDF8fHx8MTc1NzI4OTUyNXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-        "https://images.unsplash.com/photo-1610114586897-20495783e96c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkaW8lMjBnaGlibGklMjBhbmltZSUyMHN0eWxlJTIwbGFuZHNjYXBlfGVufDF8fHx8MTc1NzI4OTUyNXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-      ];
+      // Create a prompt based on the uploaded image
+      const prompt = `Transform this photo into Studio Ghibli style artwork: ${uploadedImage}`;
       
-      setGeneratedFrames(mockFrames);
-      navigate('generation');
+      // Start real AI generation using Banana API
+      await startGeneration(
+        prompt,
+        'ghibli',
+        '1024x1024',
+        uploadedImage, // Pass the uploaded image URL
+        userId
+      );
+      
     } catch (err) {
+      console.error('Generation error:', err);
       setError("Failed to generate Ghibli art. Please try again.");
-    } finally {
-      setIsGenerating(false);
-      setGenerationProgress(0);
     }
   };
 
@@ -539,25 +524,95 @@ export default function App() {
         <div className="max-w-md mx-auto">
           <h2 className="text-2xl font-display font-bold text-mintari-ink text-center mb-8 drop-shadow-sm">Your Ghibli Moments</h2>
           
-          <div className="space-y-4 mb-6">
-            {generatedFrames.map((frame, index) => (
-              <Card 
-                key={index} 
-                className={`bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl cursor-pointer transition-all hover:scale-105 hover:shadow-floating ${
-                  selectedFrame === frame ? 'ring-2 ring-pink-dark' : ''
-                }`}
-                onClick={() => setSelectedFrame(frame)}
+          {Array.from(jobs.values()).length > 0 ? (
+            <div className="space-y-4 mb-6">
+              {Array.from(jobs.values()).map((job) => {
+                if (job.state === 'success' && job.resultUrl) {
+                  return (
+                    <Card 
+                      key={job.id} 
+                      className={`bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl cursor-pointer transition-all hover:scale-105 hover:shadow-floating ${
+                        selectedFrame === job.resultUrl ? 'ring-2 ring-pink-dark' : ''
+                      }`}
+                      onClick={() => setSelectedFrame(job.resultUrl!)}
+                    >
+                      <CardContent className="p-4">
+                        <ImageWithFallback 
+                          src={job.resultUrl} 
+                          alt={`Ghibli frame ${job.id}`} 
+                          className="w-full h-48 object-cover rounded-xl"
+                        />
+                      </CardContent>
+                    </Card>
+                  );
+                } else if (job.state === 'pending' || job.state === 'running') {
+                  return (
+                    <Card 
+                      key={job.id} 
+                      className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl"
+                    >
+                      <CardContent className="p-4">
+                        <div className="w-full h-48 bg-mintari-lav/20 rounded-xl flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="animate-spin w-8 h-8 border-2 border-mintari-lav border-t-transparent rounded-full mx-auto mb-2"></div>
+                            <p className="text-mintari-ink/70 text-sm">
+                              {job.state === 'pending' ? 'Queued...' : 'Generating...'}
+                            </p>
+                            {job.progress > 0 && (
+                              <div className="mt-2">
+                                <Progress value={job.progress} className="w-full" />
+                                <p className="text-xs text-mintari-ink/60 mt-1">{job.progress}%</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                } else if (job.state === 'failed') {
+                  return (
+                    <Card 
+                      key={job.id} 
+                      className="bg-red-50/90 backdrop-blur-sm border-red-200 shadow-vibrant rounded-2xl"
+                    >
+                      <CardContent className="p-4">
+                        <div className="w-full h-48 bg-red-100/50 rounded-xl flex items-center justify-center">
+                          <div className="text-center">
+                            <div className="text-red-500 text-2xl mb-2">❌</div>
+                            <p className="text-red-700 text-sm mb-2">Generation failed</p>
+                            <Button 
+                              size="sm" 
+                              onClick={() => regenerateJob(job.id)}
+                              className="bg-red-500 hover:bg-red-600 text-white"
+                            >
+                              <RefreshCw className="w-3 h-3 mr-1" />
+                              Retry
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                }
+                return null;
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="w-20 h-20 bg-mintari-lav/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-mintari-lav text-3xl">🎨</span>
+              </div>
+              <h3 className="text-lg font-semibold text-mintari-ink mb-3">No Ghibli moments yet</h3>
+              <p className="text-mintari-ink/70 mb-6">Upload a photo and transform it into magical Studio Ghibli artwork!</p>
+              <Button 
+                onClick={() => navigate('upload')}
+                className="bg-lavender-dark hover:bg-lavender text-white border-0 shadow-vibrant hover:scale-105 transition-all font-semibold"
               >
-                <CardContent className="p-4">
-                  <ImageWithFallback 
-                    src={frame} 
-                    alt={`Ghibli frame ${index + 1}`} 
-                    className="w-full h-48 object-cover rounded-xl"
-                  />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                <Upload className="w-4 h-4 mr-2" />
+                Upload Photo
+              </Button>
+            </div>
+          )}
 
           {selectedFrame && (
             <div className="space-y-3">
@@ -579,7 +634,7 @@ export default function App() {
                   onClick={generateGhibliFrames}
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
-                  Regenerate
+                  Generate New
                 </Button>
               </div>
               <Button 
