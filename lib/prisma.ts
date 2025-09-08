@@ -221,7 +221,7 @@ export async function checkDatabaseConnection() {
     await prisma.$queryRaw`SELECT 1`
     return { status: 'connected', timestamp: new Date() }
   } catch (error) {
-    return { status: 'disconnected', error: error.message, timestamp: new Date() }
+    return { status: 'disconnected', error: error instanceof Error ? error.message : 'Unknown error', timestamp: new Date() }
   }
 }
 

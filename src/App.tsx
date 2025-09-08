@@ -3,8 +3,11 @@ import { ChevronLeft, Home, Upload, Palette, Library, Coins, ShoppingCart, Image
 import { Button } from './components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from './components/ui/card';
 import { Badge } from './components/ui/badge';
+import { Progress } from './components/ui/progress';
 import { ImageWithFallback } from './components/figma/ImageWithFallback';
 import { Sparkle } from './components/Sparkle';
+import PhotoUpload from './components/PhotoUpload';
+import { Toaster } from 'sonner';
 import exampleImage from './assets/aa07ce0034f6e4c889b68c05b1a06f573c134512.png';
 
 type Screen = 'home' | 'upload' | 'generation' | 'collection' | 'nft-mint' | 'checkout' | 'gallery';
@@ -19,6 +22,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentTooltip, setCurrentTooltip] = useState(0);
+  const [userId] = useState<string>('demo-user-123'); // In a real app, this would come from auth
   const [collection, setCollection] = useState([
     {
       id: 1,
@@ -456,97 +460,74 @@ export default function App() {
       return renderLoadingScreen();
     }
 
+    const handleUploadComplete = (filePath: string, uploadId: string) => {
+      // Set the uploaded image URL (in a real app, this would be the Supabase URL)
+      setUploadedImage(filePath);
+      // Navigate to generation screen
+      setCurrentScreen('generation');
+    };
+
     return (
       <div className="min-h-screen bg-gradient-pastel">
         {renderHeader()}
         
         <div className="p-4 pb-20">
-        <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-display font-bold text-mintari-ink text-center mb-8 drop-shadow-sm">Upload Your Photo</h2>
-          
-          {error && (
-            <div className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
-              <p className="text-red-100 text-sm text-center">{error}</p>
-            </div>
-          )}
-          
-          {!uploadedImage ? (
-            <Card className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl relative overflow-hidden">
-              {/* Sparkles around upload area */}
-              <Sparkle className="top-4 left-4" delay={0} />
-              <Sparkle className="top-4 right-4" delay={500} />
-              <Sparkle className="bottom-4 left-8" delay={1000} />
-              <Sparkle className="bottom-4 right-8" delay={1500} />
-              
-              <CardContent className="p-8 text-center relative z-10">
-                <label 
-                  htmlFor="photo-upload" 
-                  className="cursor-pointer focus-within:ring-2 focus-within:ring-pink/50 focus-within:outline-none rounded-lg p-2 block"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      document.getElementById('photo-upload')?.click();
-                    }
-                  }}
-                >
-                  <div className="w-24 h-24 bg-gradient-to-br from-pink/30 to-lavender/30 rounded-full flex items-center justify-center mx-auto mb-4 shadow-vibrant">
-                    <Plus className="w-12 h-12 text-mintari-ink" />
-                  </div>
-                  <p className="text-mintari-ink mb-2 font-semibold">Tap to upload a photo</p>
-                  <p className="text-mintari-ink/80 text-sm">JPG, PNG up to 10MB</p>
-                </label>
-                <input
-                  id="photo-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  aria-label="Upload photo for Ghibli transformation"
-                />
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              <Card className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl">
-                <CardContent className="p-4">
-                  <ImageWithFallback 
-                    src={uploadedImage} 
-                    alt="Uploaded photo" 
-                    className="w-full h-64 object-cover rounded-xl"
-                  />
-                </CardContent>
-              </Card>
-              
-              <div className="flex gap-3">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setUploadedImage(null)}
-                  className="flex-1 bg-white/90 border-mintari-lav text-mintari-ink hover:bg-mintari-lav/60 hover:scale-105 transition-all font-semibold"
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Remove
-                </Button>
-                <Button 
-                  onClick={generateGhibliFrames}
-                  disabled={isGenerating}
-                  className="flex-1 bg-pink-dark hover:bg-pink text-white border-0 disabled:opacity-50 shadow-glow hover:scale-105 transition-all font-semibold"
-                >
-                  {isGenerating ? (
-                    <div className="flex items-center gap-2">
-                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-                      Generating...
-                    </div>
-                  ) : (
-                    "Generate Ghibli Art"
-                  )}
-                </Button>
+          <div className="max-w-md mx-auto">
+            <h2 className="text-2xl font-display font-bold text-mintari-ink text-center mb-8 drop-shadow-sm">Upload Your Photo</h2>
+            
+            {error && (
+              <div className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
+                <p className="text-red-100 text-sm text-center">{error}</p>
               </div>
-            </div>
-          )}
+            )}
+            
+            {!uploadedImage ? (
+              <PhotoUpload 
+                onUploadComplete={handleUploadComplete}
+                userId={userId}
+                maxFiles={1}
+              />
+            ) : (
+              <div className="space-y-4">
+                <Card className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl">
+                  <CardContent className="p-4">
+                    <ImageWithFallback 
+                      src={uploadedImage} 
+                      alt="Uploaded photo" 
+                      className="w-full h-64 object-cover rounded-xl"
+                    />
+                  </CardContent>
+                </Card>
+                
+                <div className="flex gap-3">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setUploadedImage(null)}
+                    className="flex-1 bg-white/90 border-mintari-lav text-mintari-ink hover:bg-mintari-lav/60 hover:scale-105 transition-all font-semibold"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Remove
+                  </Button>
+                  <Button 
+                    onClick={generateGhibliFrames}
+                    disabled={isGenerating}
+                    className="flex-1 bg-pink-dark hover:bg-pink text-white border-0 disabled:opacity-50 shadow-glow hover:scale-105 transition-all font-semibold"
+                  >
+                    {isGenerating ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                        Generating...
+                      </div>
+                    ) : (
+                      "Generate Ghibli Art"
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
     );
   };
 
@@ -880,6 +861,7 @@ export default function App() {
     <>
       {screens[currentScreen]()}
       {renderOnboardingOverlay()}
+      <Toaster position="top-center" richColors />
     </>
   );
 }
