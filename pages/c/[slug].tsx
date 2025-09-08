@@ -1,12 +1,10 @@
 import { GetServerSideProps } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../lib/prisma';
 import { Card, CardContent, CardHeader, CardTitle } from '../../src/components/ui/card';
 import { Badge } from '../../src/components/ui/badge';
 import { Button } from '../../src/components/ui/button';
 import { Share2, Calendar, Image, Palette } from 'lucide-react';
 import { ImageWithFallback } from '../../src/components/figma/ImageWithFallback';
-
-const prisma = new PrismaClient();
 
 interface PublicCollectionPageProps {
   collection: {
