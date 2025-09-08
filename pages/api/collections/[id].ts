@@ -121,16 +121,22 @@ export default async function handler(
         publicSlug: collection.publicSlug || undefined,
         createdAt: collection.createdAt.toISOString(),
         updatedAt: collection.updatedAt.toISOString(),
-        items: collection.items.map(item => ({
-          id: item.id,
-          title: item.title,
-          description: item.description || undefined,
-          tags: item.tags,
-          isFavorite: item.isFavorite,
-          createdAt: item.createdAt.toISOString(),
-          upload: item.upload,
-          generatedImage: item.generatedImage,
-        })),
+        items: collection.items
+          .filter(item => item.generatedImage) // Only include items with generatedImage
+          .map(item => ({
+            id: item.id,
+            title: item.title,
+            description: item.description || undefined,
+            tags: item.tags,
+            isFavorite: item.isFavorite,
+            createdAt: item.createdAt.toISOString(),
+            upload: item.upload,
+            generatedImage: {
+              id: item.generatedImage!.id,
+              imageUrl: item.generatedImage!.imageUrl,
+              thumbnailUrl: item.generatedImage!.thumbnailUrl || undefined,
+            },
+          })),
         assets: collection.assets.map(asset => ({
           id: asset.id,
           url: asset.url,
@@ -157,7 +163,7 @@ export default async function handler(
       // Check if user owns the collection
       const existingCollection = await prisma.collection.findUnique({
         where: { id },
-        select: { userId: true },
+        select: { userId: true, publicSlug: true, title: true },
       });
 
       if (!existingCollection) {

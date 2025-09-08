@@ -22,8 +22,8 @@ export default function PWAInstallPrompt() {
         return;
       }
 
-      // Check if running in fullscreen mode
-      if (window.navigator.standalone === true) {
+      // Check if running in fullscreen mode (iOS PWA)
+      if ((window.navigator as any).standalone === true) {
         setIsInstalled(true);
         return;
       }

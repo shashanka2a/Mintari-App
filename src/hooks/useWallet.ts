@@ -39,6 +39,11 @@ export function useWallet(): WalletState & WalletActions {
 
     const initializeWallet = async () => {
       try {
+        if (!window.ethereum) {
+          setState({ isConnected: false, address: null, chainId: null, networkName: null, isCorrectNetwork: false, isLoading: false, error: null });
+          return;
+        }
+        
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
 
@@ -93,15 +98,17 @@ export function useWallet(): WalletState & WalletActions {
       }));
     };
 
-    window.ethereum.on('accountsChanged', handleAccountsChanged);
-    window.ethereum.on('chainChanged', handleChainChanged);
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleChainChanged);
 
-    return () => {
-      if (window.ethereum.removeListener) {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleChainChanged);
-      }
-    };
+      return () => {
+        if (window.ethereum?.removeListener) {
+          window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+          window.ethereum.removeListener('chainChanged', handleChainChanged);
+        }
+      };
+    }
   }, [isWalletAvailable]);
 
   // Connect wallet
@@ -117,6 +124,10 @@ export function useWallet(): WalletState & WalletActions {
 
     try {
       // Request account access
+      if (!window.ethereum) {
+        throw new Error('No wallet found');
+      }
+      
       const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts',
       });
@@ -126,7 +137,7 @@ export function useWallet(): WalletState & WalletActions {
       }
 
       // Get current chain
-      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      const chainId = await window.ethereum!.request({ method: 'eth_chainId' });
       const networkInfo = getNetworkInfo(chainId);
 
       setState({
@@ -178,7 +189,7 @@ export function useWallet(): WalletState & WalletActions {
     const targetNetwork = WALLET_CONFIG.NETWORKS[WALLET_CONFIG.DEFAULT_NETWORK];
 
     try {
-      await window.ethereum.request({
+      await window.ethereum!.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: targetNetwork.chainId }],
       });
@@ -199,7 +210,7 @@ export function useWallet(): WalletState & WalletActions {
     const targetNetwork = WALLET_CONFIG.NETWORKS[WALLET_CONFIG.DEFAULT_NETWORK];
 
     try {
-      await window.ethereum.request({
+      await window.ethereum!.request({
         method: 'wallet_addEthereumChain',
         params: [targetNetwork],
       });

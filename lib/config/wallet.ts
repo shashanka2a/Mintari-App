@@ -50,7 +50,7 @@ export const WALLET_CONFIG = {
 // Network validation
 export function isValidNetwork(chainId: string): boolean {
   const validChainIds = Object.values(WALLET_CONFIG.NETWORKS).map(network => network.chainId);
-  return validChainIds.includes(chainId);
+  return validChainIds.includes(chainId as any);
 }
 
 // Get network info by chain ID

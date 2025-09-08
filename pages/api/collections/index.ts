@@ -27,10 +27,26 @@ interface CollectionResponse {
   };
 }
 
+interface CreateCollectionResponse {
+  id: string;
+  title: string;
+  description?: string;
+  style: string;
+  isPublic: boolean;
+  publicSlug?: string;
+  createdAt: string;
+  updatedAt: string;
+  _count: {
+    items: number;
+    assets: number;
+  };
+}
+
 // GET /api/collections - List collections for a user
+// POST /api/collections - Create a new collection
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<CollectionResponse[] | { error: string }>
+  res: NextApiResponse<CollectionResponse[] | CreateCollectionResponse | { error: string }>
 ) {
   if (req.method === 'GET') {
     try {

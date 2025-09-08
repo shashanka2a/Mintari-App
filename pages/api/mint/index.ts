@@ -116,7 +116,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<MintR
   // For now, we'll skip this check
 
   // Generate metadata URIs
-  const metadataURIs = assets.map(asset => generateMetadataURI(asset));
+  const metadataURIs = assets.map((asset: any) => generateMetadataURI(asset));
 
   // Mint NFTs (mock implementation)
   const transactionHashes = await mintNFTs(assets, userAddress);
@@ -128,14 +128,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<MintR
     const metadataURI = metadataURIs[i];
 
     // Create NFT minting record
-    await prisma.nftMinting.create({
+    await prisma.nFTMinting.create({
       data: {
         userId: userId,
-        assetId: asset.id,
+        generatedImageId: asset.id,
         tokenId: `0x${Math.random().toString(16).substring(2, 10)}`, // Mock token ID
         contractAddress: WALLET_CONFIG.CONTRACTS.ERC1155_EDITION,
         transactionHash: txHash,
-        metadataURI: metadataURI,
+        metadataUrl: metadataURI,
         mintStatus: 'COMPLETED',
         mintedAt: new Date(),
       }

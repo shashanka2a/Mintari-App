@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
 
-interface GenerationJob {
+export interface GenerationJob {
   id: string;
   state: 'pending' | 'running' | 'success' | 'failed' | 'cancelled';
   progress: number;
