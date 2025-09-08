@@ -1,21 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { WALLET_CONFIG } from '../../../lib/config/wallet';
+import { withPost, validateRequired, validateEthereumAddress, requireAuth } from '../../../lib/api/apiWrapper';
+import { MintRequest, MintResponse, ApiErrorCode } from '../../../lib/types/api';
 
 const prisma = new PrismaClient();
-
-interface MintRequest {
-  assetIds: string[];
-  userAddress: string;
-  userId: string;
-}
-
-interface MintResponse {
-  success: boolean;
-  transactionHashes?: string[];
-  error?: string;
-  errorCode?: string;
-}
 
 // Mock NFT minting function (replace with actual contract interaction)
 async function mintNFTs(assets: any[], userAddress: string): Promise<string[]> {
@@ -77,54 +66,28 @@ function generateMetadataURI(asset: any): string {
   return `https://metadata.mintari.app/${asset.id}`;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<MintResponse>
-) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Method not allowed' 
-    });
+async function handler(req: NextApiRequest, res: NextApiResponse): Promise<MintResponse> {
+  const { assetIds, userAddress, userId }: MintRequest = req.body;
+
+  // Validate required fields
+  validateRequired(req.body, ['assetIds', 'userAddress', 'userId']);
+  
+  // Validate assetIds array
+  if (!Array.isArray(assetIds) || assetIds.length === 0) {
+    const error = new Error('assetIds must be a non-empty array');
+    error.name = 'ValidationError';
+    throw error;
   }
 
-  try {
-    const { assetIds, userAddress, userId }: MintRequest = req.body;
+  // Validate batch size
+  if (assetIds.length > WALLET_CONFIG.MINTING.BATCH_SIZE) {
+    const error = new Error(`Too many assets (max ${WALLET_CONFIG.MINTING.BATCH_SIZE})`);
+    error.name = 'ValidationError';
+    throw error;
+  }
 
-    // Validate required fields
-    if (!assetIds || !Array.isArray(assetIds) || assetIds.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'assetIds array is required and cannot be empty',
-        errorCode: 'INVALID_INPUT'
-      });
-    }
-
-    if (!userAddress || !userId) {
-      return res.status(400).json({
-        success: false,
-        error: 'userAddress and userId are required',
-        errorCode: 'INVALID_INPUT'
-      });
-    }
-
-    // Validate batch size
-    if (assetIds.length > WALLET_CONFIG.MINTING.BATCH_SIZE) {
-      return res.status(400).json({
-        success: false,
-        error: `Too many assets (max ${WALLET_CONFIG.MINTING.BATCH_SIZE})`,
-        errorCode: 'BATCH_SIZE_EXCEEDED'
-      });
-    }
-
-    // Validate user address format (basic Ethereum address validation)
-    if (!/^0x[a-fA-F0-9]{40}$/.test(userAddress)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid Ethereum address format',
-        errorCode: 'INVALID_ADDRESS'
-      });
-    }
+  // Validate Ethereum address
+  validateEthereumAddress(userAddress);
 
     // Get assets from database
     const assets = await prisma.asset.findMany({
