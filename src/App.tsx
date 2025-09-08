@@ -33,9 +33,9 @@ export default function App() {
       console.log('Generation completed:', job);
       navigate('generation');
     },
-    onError: (error) => {
-      console.error('Generation failed:', error);
-      setError(error.message || 'Generation failed');
+    onError: (job) => {
+      console.error('Generation failed:', job);
+      setError(job.error || 'Generation failed');
     }
   });
   const [collection, setCollection] = useState([
@@ -422,19 +422,15 @@ export default function App() {
           <div className="animate-spin w-16 h-16 border-4 border-white border-t-transparent rounded-full mx-auto mb-6"></div>
           <h2 className="text-2xl font-display font-bold text-white mb-4">Creating Magic</h2>
           <p className="text-white/90 mb-6">
-            {generationProgress < 20 && "Analyzing your photo..."}
-            {generationProgress >= 20 && generationProgress < 40 && "Applying Ghibli magic..."}
-            {generationProgress >= 40 && generationProgress < 60 && "Creating artistic variations..."}
-            {generationProgress >= 60 && generationProgress < 80 && "Adding final touches..."}
-            {generationProgress >= 80 && "Almost done!"}
+            Transforming your photo into magical Studio Ghibli artwork...
           </p>
           <div className="w-full bg-white/20 rounded-full h-2 mb-4">
             <div 
-              className="bg-white h-2 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${generationProgress}%` }}
+              className="bg-white h-2 rounded-full transition-all duration-500 ease-out animate-pulse"
+              style={{ width: '60%' }}
             ></div>
           </div>
-          <p className="text-white/70 text-sm">{generationProgress}% complete</p>
+          <p className="text-white/70 text-sm">Generating your artwork...</p>
         </div>
       </div>
     </div>
@@ -527,18 +523,18 @@ export default function App() {
           {Array.from(jobs.values()).length > 0 ? (
             <div className="space-y-4 mb-6">
               {Array.from(jobs.values()).map((job) => {
-                if (job.state === 'success' && job.resultUrl) {
+                if (job.state === 'success' && job.url) {
                   return (
                     <Card 
                       key={job.id} 
                       className={`bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl cursor-pointer transition-all hover:scale-105 hover:shadow-floating ${
-                        selectedFrame === job.resultUrl ? 'ring-2 ring-pink-dark' : ''
+                        selectedFrame === job.url ? 'ring-2 ring-pink-dark' : ''
                       }`}
-                      onClick={() => setSelectedFrame(job.resultUrl!)}
+                      onClick={() => setSelectedFrame(job.url!)}
                     >
                       <CardContent className="p-4">
                         <ImageWithFallback 
-                          src={job.resultUrl} 
+                          src={job.url} 
                           alt={`Ghibli frame ${job.id}`} 
                           className="w-full h-48 object-cover rounded-xl"
                         />
