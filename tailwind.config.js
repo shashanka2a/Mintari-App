@@ -18,14 +18,19 @@ module.exports = {
     },
     extend: {
       colors: {
-        // Mintari brand colors
-        lavender: "#C7B6FF",
-        peach: "#FFB38A", 
-        sky: "#8EC9FF",
-        pink: "#FF76A1",
-        soft: "#F8F6FF",
-        "mintari-ink": "#2D1B69",
-        "mintari-lav": "#E8E0FF",
+        // Mintari brand colors - Enhanced for better contrast
+        lavender: "#9B7BFF",
+        peach: "#FF8A5B", 
+        sky: "#5BA3FF",
+        pink: "#FF4D7A",
+        soft: "#F0EBFF",
+        "mintari-ink": "#1A0B4A",
+        "mintari-lav": "#D4C7FF",
+        // Additional vibrant colors
+        "lavender-dark": "#7B5BFF",
+        "peach-dark": "#FF6B3B",
+        "sky-dark": "#3B8BFF",
+        "pink-dark": "#FF2D5A",
         // Keep existing shadcn colors
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -73,10 +78,17 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       backgroundImage: {
-        "mintari": "linear-gradient(135deg, #C7B6FF 0%, #FFB38A 50%, #8EC9FF 100%)",
+        "mintari": "linear-gradient(135deg, #9B7BFF 0%, #FF8A5B 50%, #5BA3FF 100%)",
+        "gradient-text": "linear-gradient(135deg, #9B7BFF 0%, #FF8A5B 100%)",
+        "gradient-pastel": "linear-gradient(135deg, #D4C7FF 0%, #FFD4C7 50%, #C7E4FF 100%)",
+        "gradient-vibrant": "linear-gradient(135deg, #7B5BFF 0%, #FF6B3B 50%, #3B8BFF 100%)",
       },
       boxShadow: {
-        "soft": "0 4px 20px rgba(199, 182, 255, 0.15)",
+        "soft": "0 4px 20px rgba(155, 123, 255, 0.25)",
+        "floating": "0 8px 32px rgba(155, 123, 255, 0.35), 0 2px 8px rgba(155, 123, 255, 0.2)",
+        "glow": "0 0 25px rgba(255, 77, 122, 0.5), 0 4px 20px rgba(155, 123, 255, 0.25)",
+        "storybook": "0 4px 20px rgba(155, 123, 255, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+        "vibrant": "0 6px 25px rgba(123, 91, 255, 0.3), 0 2px 10px rgba(255, 107, 59, 0.2)",
       },
       keyframes: {
         "accordion-down": {

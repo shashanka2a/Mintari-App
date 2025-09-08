@@ -341,17 +341,17 @@ export default function App() {
       {/* Hero Section */}
       <div className="px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-mintari p-8 rounded-2xl shadow-soft relative overflow-hidden">
+          <div className="bg-gradient-vibrant p-8 rounded-2xl shadow-vibrant animate-float relative overflow-hidden">
             {/* Sparkles */}
             <Sparkle className="top-4 left-8" delay={0} />
             <Sparkle className="top-12 right-12" delay={500} />
             <Sparkle className="bottom-8 left-16" delay={1000} />
             
             <div className="text-center relative z-10">
-              <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 text-white">
+              <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-lg">
                 Mint Your Ghibli Moments ✨
               </h1>
-              <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+              <p className="text-lg text-white/95 mb-8 max-w-2xl mx-auto drop-shadow-md">
                 Transform your precious photos into beautiful AI-generated storybooks and custom frames. Turn memories into magical masterpieces.
               </p>
               
@@ -359,16 +359,17 @@ export default function App() {
                 <Button 
                   size="lg" 
                   onClick={() => navigate('upload')}
-                  className="bg-pink text-white rounded-2xl px-6 py-3 shadow-soft hover:bg-pink/90 focus:ring-2 focus:ring-pink/50 focus:outline-none"
+                  className="bg-pink-dark text-white rounded-2xl px-6 py-3 shadow-glow animate-glow hover:bg-pink hover:scale-105 transition-all focus:ring-2 focus:ring-pink/50 focus:outline-none relative overflow-hidden"
                   aria-label="Start creating your Ghibli art"
                 >
-                  Start Creating
+                  <span className="relative z-10 font-semibold">Start Creating</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shine"></div>
                 </Button>
                 <Button 
                   variant="outline" 
                   size="lg"
                   onClick={() => navigate('gallery')}
-                  className="bg-white/20 border-white/30 text-white hover:bg-white/30 rounded-2xl focus:ring-2 focus:ring-white/50 focus:outline-none"
+                  className="bg-white/30 border-white/50 text-white hover:bg-white/40 hover:scale-105 transition-all rounded-2xl focus:ring-2 focus:ring-white/50 focus:outline-none font-semibold"
                   aria-label="View examples of Ghibli transformations"
                 >
                   View Examples
@@ -379,46 +380,46 @@ export default function App() {
 
           {/* Quick Actions */}
           <div className="flex justify-center gap-8 mb-16 mt-16">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-peach rounded-full flex items-center justify-center mb-2 mx-auto shadow-soft">
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-peach-dark rounded-full flex items-center justify-center mb-2 mx-auto shadow-vibrant group-hover:scale-110 transition-all">
                 <Upload className="w-8 h-8 text-white" />
               </div>
-              <p className="text-sm text-mintari-ink">Upload Photo</p>
+              <p className="text-sm text-mintari-ink font-medium">Upload Photo</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-sky rounded-full flex items-center justify-center mb-2 mx-auto shadow-soft">
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-sky-dark rounded-full flex items-center justify-center mb-2 mx-auto shadow-vibrant group-hover:scale-110 transition-all">
                 <Palette className="w-8 h-8 text-white" />
               </div>
-              <p className="text-sm text-mintari-ink">AI Storybook</p>
+              <p className="text-sm text-mintari-ink font-medium">AI Storybook</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-lavender rounded-full flex items-center justify-center mb-2 mx-auto shadow-soft">
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-lavender-dark rounded-full flex items-center justify-center mb-2 mx-auto shadow-vibrant group-hover:scale-110 transition-all">
                 <ShoppingCart className="w-8 h-8 text-white" />
               </div>
-              <p className="text-sm text-mintari-ink">Custom Frame</p>
+              <p className="text-sm text-mintari-ink font-medium">Custom Frame</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm border-t border-mintari-lav">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-mintari-lav shadow-lg">
         <div className="flex justify-around py-2">
-          <Button variant="ghost" className="flex-col text-mintari-ink hover:bg-mintari-lav/50 py-3" onClick={() => navigate('home')}>
+          <Button variant="ghost" className="flex-col text-pink-dark hover:bg-pink/15 py-3 hover:scale-105 transition-all" onClick={() => navigate('home')}>
             <Home className="w-5 h-5 mb-1" />
-            <span className="text-xs">Home</span>
+            <span className="text-xs font-medium">Home</span>
           </Button>
-          <Button variant="ghost" className="flex-col text-mintari-ink hover:bg-mintari-lav/50 py-3" onClick={() => navigate('upload')}>
+          <Button variant="ghost" className="flex-col text-peach-dark hover:bg-peach/15 py-3 hover:scale-105 transition-all" onClick={() => navigate('upload')}>
             <Upload className="w-5 h-5 mb-1" />
-            <span className="text-xs">Upload</span>
+            <span className="text-xs font-medium">Upload</span>
           </Button>
-          <Button variant="ghost" className="flex-col text-mintari-ink hover:bg-mintari-lav/50 py-3" onClick={() => navigate('collection')}>
+          <Button variant="ghost" className="flex-col text-lavender-dark hover:bg-lavender/15 py-3 hover:scale-105 transition-all" onClick={() => navigate('collection')}>
             <Library className="w-5 h-5 mb-1" />
-            <span className="text-xs">Collection</span>
+            <span className="text-xs font-medium">Collection</span>
           </Button>
-          <Button variant="ghost" className="flex-col text-mintari-ink hover:bg-mintari-lav/50 py-3" onClick={() => navigate('gallery')}>
+          <Button variant="ghost" className="flex-col text-sky-dark hover:bg-sky/15 py-3 hover:scale-105 transition-all" onClick={() => navigate('gallery')}>
             <Image className="w-5 h-5 mb-1" />
-            <span className="text-xs">Gallery</span>
+            <span className="text-xs font-medium">Gallery</span>
           </Button>
         </div>
       </div>
@@ -456,12 +457,12 @@ export default function App() {
     }
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
+      <div className="min-h-screen bg-gradient-pastel">
         {renderHeader()}
         
         <div className="p-4 pb-20">
         <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-white text-center mb-8">Upload Your Photo</h2>
+          <h2 className="text-2xl font-display font-bold text-mintari-ink text-center mb-8 drop-shadow-sm">Upload Your Photo</h2>
           
           {error && (
             <div className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl">
@@ -470,11 +471,17 @@ export default function App() {
           )}
           
           {!uploadedImage ? (
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20">
-              <CardContent className="p-8 text-center">
+            <Card className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl relative overflow-hidden">
+              {/* Sparkles around upload area */}
+              <Sparkle className="top-4 left-4" delay={0} />
+              <Sparkle className="top-4 right-4" delay={500} />
+              <Sparkle className="bottom-4 left-8" delay={1000} />
+              <Sparkle className="bottom-4 right-8" delay={1500} />
+              
+              <CardContent className="p-8 text-center relative z-10">
                 <label 
                   htmlFor="photo-upload" 
-                  className="cursor-pointer focus-within:ring-2 focus-within:ring-white/50 focus-within:outline-none rounded-lg p-2 block"
+                  className="cursor-pointer focus-within:ring-2 focus-within:ring-pink/50 focus-within:outline-none rounded-lg p-2 block"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -483,11 +490,11 @@ export default function App() {
                     }
                   }}
                 >
-                  <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Plus className="w-12 h-12 text-white" />
+                  <div className="w-24 h-24 bg-gradient-to-br from-pink/30 to-lavender/30 rounded-full flex items-center justify-center mx-auto mb-4 shadow-vibrant">
+                    <Plus className="w-12 h-12 text-mintari-ink" />
                   </div>
-                  <p className="text-white mb-2">Tap to upload a photo</p>
-                  <p className="text-white/70 text-sm">JPG, PNG up to 10MB</p>
+                  <p className="text-mintari-ink mb-2 font-semibold">Tap to upload a photo</p>
+                  <p className="text-mintari-ink/80 text-sm">JPG, PNG up to 10MB</p>
                 </label>
                 <input
                   id="photo-upload"
@@ -501,12 +508,12 @@ export default function App() {
             </Card>
           ) : (
             <div className="space-y-4">
-              <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+              <Card className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl">
                 <CardContent className="p-4">
                   <ImageWithFallback 
                     src={uploadedImage} 
                     alt="Uploaded photo" 
-                    className="w-full h-64 object-cover rounded-lg"
+                    className="w-full h-64 object-cover rounded-xl"
                   />
                 </CardContent>
               </Card>
@@ -515,7 +522,7 @@ export default function App() {
                 <Button 
                   variant="outline" 
                   onClick={() => setUploadedImage(null)}
-                  className="flex-1 bg-white/20 border-white/30 text-white hover:bg-white/30"
+                  className="flex-1 bg-white/90 border-mintari-lav text-mintari-ink hover:bg-mintari-lav/60 hover:scale-105 transition-all font-semibold"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
                   Remove
@@ -523,7 +530,7 @@ export default function App() {
                 <Button 
                   onClick={generateGhibliFrames}
                   disabled={isGenerating}
-                  className="flex-1 bg-orange-500 hover:bg-orange-600 text-white border-0 disabled:opacity-50"
+                  className="flex-1 bg-pink-dark hover:bg-pink text-white border-0 disabled:opacity-50 shadow-glow hover:scale-105 transition-all font-semibold"
                 >
                   {isGenerating ? (
                     <div className="flex items-center gap-2">
@@ -544,19 +551,19 @@ export default function App() {
   };
 
   const renderGenerationScreen = () => (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
+    <div className="min-h-screen bg-gradient-pastel">
       {renderHeader()}
       
       <div className="p-4 pb-20">
         <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-white text-center mb-8">Your Ghibli Moments</h2>
+          <h2 className="text-2xl font-display font-bold text-mintari-ink text-center mb-8 drop-shadow-sm">Your Ghibli Moments</h2>
           
           <div className="space-y-4 mb-6">
             {generatedFrames.map((frame, index) => (
               <Card 
                 key={index} 
-                className={`bg-white/10 backdrop-blur-sm border-white/20 cursor-pointer transition-all ${
-                  selectedFrame === frame ? 'ring-2 ring-orange-500' : ''
+                className={`bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl cursor-pointer transition-all hover:scale-105 hover:shadow-floating ${
+                  selectedFrame === frame ? 'ring-2 ring-pink-dark' : ''
                 }`}
                 onClick={() => setSelectedFrame(frame)}
               >
@@ -564,7 +571,7 @@ export default function App() {
                   <ImageWithFallback 
                     src={frame} 
                     alt={`Ghibli frame ${index + 1}`} 
-                    className="w-full h-48 object-cover rounded-lg"
+                    className="w-full h-48 object-cover rounded-xl"
                   />
                 </CardContent>
               </Card>
@@ -576,7 +583,7 @@ export default function App() {
               <div className="flex gap-2">
                 <Button 
                   variant="outline" 
-                  className="flex-1 bg-white/20 border-white/30 text-white hover:bg-white/30"
+                  className="flex-1 bg-white/90 border-mintari-lav text-mintari-ink hover:bg-mintari-lav/60 hover:scale-105 transition-all font-semibold"
                   onClick={() => {
                     addToCollection();
                     navigate('collection');
@@ -587,7 +594,7 @@ export default function App() {
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="flex-1 bg-white/20 border-white/30 text-white hover:bg-white/30"
+                  className="flex-1 bg-white/90 border-mintari-lav text-mintari-ink hover:bg-mintari-lav/60 hover:scale-105 transition-all font-semibold"
                   onClick={generateGhibliFrames}
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
@@ -596,14 +603,14 @@ export default function App() {
               </div>
               <Button 
                 onClick={() => navigate('nft-mint')}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white border-0"
+                className="w-full bg-lavender-dark hover:bg-lavender text-white border-0 shadow-vibrant hover:scale-105 transition-all font-semibold"
               >
                 <Coins className="w-4 h-4 mr-2" />
                 Mint as NFT
               </Button>
               <Button 
                 onClick={() => navigate('checkout')}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white border-0"
+                className="w-full bg-peach-dark hover:bg-peach text-white border-0 shadow-vibrant hover:scale-105 transition-all font-semibold"
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Order Physical Frame
@@ -616,45 +623,52 @@ export default function App() {
   );
 
   const renderCollectionScreen = () => (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
+    <div className="min-h-screen bg-gradient-pastel">
       {renderHeader()}
       
       <div className="p-4 pb-20">
         <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-white text-center mb-8">My Collection</h2>
+          <h2 className="text-2xl font-display font-bold text-mintari-ink text-center mb-8 drop-shadow-sm">My Collection</h2>
           
           <div className="space-y-4">
             {collection.map((item) => (
-              <Card key={item.id} className="bg-white/10 backdrop-blur-sm border-white/20">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-white text-lg">{item.title}</CardTitle>
-                  <p className="text-white/70 text-sm">{item.date}</p>
+              <Card key={item.id} className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl relative overflow-hidden group hover:scale-105 transition-all duration-300">
+                {/* Storybook frame effect */}
+                <div className="absolute inset-0 border-2 border-gradient-to-r from-pink/30 via-lavender/30 to-sky/30 rounded-2xl pointer-events-none"></div>
+                <div className="absolute top-2 left-2 w-3 h-3 bg-pink/50 rounded-full"></div>
+                <div className="absolute top-2 right-2 w-3 h-3 bg-lavender/50 rounded-full"></div>
+                <div className="absolute bottom-2 left-2 w-3 h-3 bg-sky/50 rounded-full"></div>
+                <div className="absolute bottom-2 right-2 w-3 h-3 bg-peach/50 rounded-full"></div>
+                
+                <CardHeader className="pb-2 relative z-10">
+                  <CardTitle className="text-mintari-ink text-lg font-display">{item.title}</CardTitle>
+                  <p className="text-mintari-ink/70 text-sm">{item.date}</p>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 relative z-10">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <p className="text-white/70 text-xs mb-1">Original</p>
+                      <p className="text-mintari-ink/70 text-xs mb-1">Original</p>
                       <ImageWithFallback 
                         src={item.originalImage} 
                         alt="Original photo" 
-                        className="w-full h-24 object-cover rounded"
+                        className="w-full h-24 object-cover rounded-xl"
                       />
                     </div>
                     <div>
-                      <p className="text-white/70 text-xs mb-1">Ghibli Style</p>
+                      <p className="text-mintari-ink/70 text-xs mb-1">Ghibli Style</p>
                       <ImageWithFallback 
                         src={item.ghibliFrame} 
                         alt="Ghibli frame" 
-                        className="w-full h-24 object-cover rounded"
+                        className="w-full h-24 object-cover rounded-xl"
                       />
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="flex gap-2 pt-2">
+                <CardFooter className="flex gap-2 pt-2 relative z-10">
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="flex-1 bg-white/20 border-white/30 text-white hover:bg-white/30"
+                    className="flex-1 bg-pink/20 border-pink/40 text-pink-dark hover:bg-pink/30 hover:scale-105 transition-all font-semibold"
                   >
                     <Heart className="w-3 h-3 mr-1" />
                     Share
@@ -662,7 +676,7 @@ export default function App() {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    className="flex-1 bg-white/20 border-white/30 text-white hover:bg-white/30"
+                    className="flex-1 bg-lavender/20 border-lavender/40 text-lavender-dark hover:bg-lavender/30 hover:scale-105 transition-all font-semibold"
                   >
                     <Coins className="w-3 h-3 mr-1" />
                     Mint NFT
@@ -677,54 +691,54 @@ export default function App() {
   );
 
   const renderNFTMintScreen = () => (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
+    <div className="min-h-screen bg-gradient-pastel">
       {renderHeader()}
       
       <div className="p-4 pb-20">
         <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-white text-center mb-8">Mint as NFT</h2>
+          <h2 className="text-2xl font-display font-bold text-mintari-ink text-center mb-8 drop-shadow-sm">Mint as NFT</h2>
           
           {selectedFrame && (
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20 mb-6">
+            <Card className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl mb-6">
               <CardContent className="p-4">
                 <ImageWithFallback 
                   src={selectedFrame} 
                   alt="Selected frame" 
-                  className="w-full h-48 object-cover rounded-lg mb-4"
+                  className="w-full h-48 object-cover rounded-xl mb-4"
                 />
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-white/70">Mint Price:</span>
-                    <span className="text-white font-medium">0.05 ETH</span>
+                    <span className="text-mintari-ink/70">Mint Price:</span>
+                    <span className="text-mintari-ink font-medium">0.05 ETH</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/70">Gas Fee:</span>
-                    <span className="text-white font-medium">~$5.00</span>
+                    <span className="text-mintari-ink/70">Gas Fee:</span>
+                    <span className="text-mintari-ink font-medium">~$5.00</span>
                   </div>
                   <div className="flex justify-between font-medium">
-                    <span className="text-white">Total:</span>
-                    <span className="text-white">0.05 ETH + Gas</span>
+                    <span className="text-mintari-ink">Total:</span>
+                    <span className="text-mintari-ink">0.05 ETH + Gas</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
           )}
 
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20 mb-6">
+          <Card className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl mb-6">
             <CardContent className="p-4 text-center">
-              <Wallet className="w-12 h-12 text-white mx-auto mb-4" />
-              <h3 className="text-white font-medium mb-2">Connect Your Wallet</h3>
-              <p className="text-white/70 text-sm mb-4">
+              <Wallet className="w-12 h-12 text-mintari-ink mx-auto mb-4" />
+              <h3 className="text-mintari-ink font-semibold mb-2">Connect Your Wallet</h3>
+              <p className="text-mintari-ink/80 text-sm mb-4">
                 Connect your wallet to mint this artwork as an NFT on the blockchain
               </p>
-              <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white border-0">
+              <Button className="w-full bg-lavender-dark hover:bg-lavender text-white border-0 shadow-vibrant hover:scale-105 transition-all font-semibold">
                 Connect Wallet
               </Button>
             </CardContent>
           </Card>
 
           <div className="text-center">
-            <p className="text-white/70 text-xs">
+            <p className="text-mintari-ink/70 text-xs">
               By minting, you agree to our terms of service and confirm ownership of the original photo
             </p>
           </div>
@@ -734,38 +748,38 @@ export default function App() {
   );
 
   const renderCheckoutScreen = () => (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400">
+    <div className="min-h-screen bg-gradient-pastel">
       {renderHeader()}
       
       <div className="p-4 pb-20">
         <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-bold text-white text-center mb-8">Order Physical Frame</h2>
+          <h2 className="text-2xl font-display font-bold text-mintari-ink text-center mb-8 drop-shadow-sm">Order Physical Frame</h2>
           
           {selectedFrame && (
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20 mb-6">
+            <Card className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl mb-6">
               <CardContent className="p-4">
                 <ImageWithFallback 
                   src={selectedFrame} 
                   alt="Selected frame" 
-                  className="w-full h-48 object-cover rounded-lg mb-4"
+                  className="w-full h-48 object-cover rounded-xl mb-4"
                 />
                 <div className="space-y-3">
                   <div>
-                    <h3 className="text-white font-medium mb-2">Frame Options</h3>
+                    <h3 className="text-mintari-ink font-medium mb-2">Frame Options</h3>
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
+                      <div className="flex items-center justify-between p-3 bg-mintari-lav/20 rounded-xl">
                         <div>
-                          <p className="text-white font-medium">Premium Wood Frame</p>
-                          <p className="text-white/70 text-sm">12" x 16" with matting</p>
+                          <p className="text-mintari-ink font-medium">Premium Wood Frame</p>
+                          <p className="text-mintari-ink/70 text-sm">12" x 16" with matting</p>
                         </div>
-                        <Badge className="bg-orange-500">$89</Badge>
+                        <Badge className="bg-peach text-white">$89</Badge>
                       </div>
-                      <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                      <div className="flex items-center justify-between p-3 bg-mintari-lav/10 rounded-xl">
                         <div>
-                          <p className="text-white font-medium">Metal Frame</p>
-                          <p className="text-white/70 text-sm">12" x 16" modern style</p>
+                          <p className="text-mintari-ink font-medium">Metal Frame</p>
+                          <p className="text-mintari-ink/70 text-sm">12" x 16" modern style</p>
                         </div>
-                        <Badge variant="outline" className="border-white/30 text-white">$65</Badge>
+                        <Badge variant="outline" className="border-mintari-lav text-mintari-ink">$65</Badge>
                       </div>
                     </div>
                   </div>
@@ -774,17 +788,17 @@ export default function App() {
             </Card>
           )}
 
-          <Card className="bg-white/10 backdrop-blur-sm border-white/20 mb-6">
+          <Card className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl mb-6">
             <CardContent className="p-4">
-              <h3 className="text-white font-medium mb-4">Payment Method</h3>
+              <h3 className="text-mintari-ink font-semibold mb-4">Payment Method</h3>
               <div className="space-y-3">
-                <div className="flex items-center p-3 bg-white/10 rounded-lg">
-                  <CreditCard className="w-5 h-5 text-white mr-3" />
-                  <span className="text-white">•••• •••• •••• 4242</span>
+                <div className="flex items-center p-3 bg-mintari-lav/30 rounded-xl">
+                  <CreditCard className="w-5 h-5 text-mintari-ink mr-3" />
+                  <span className="text-mintari-ink font-medium">•••• •••• •••• 4242</span>
                 </div>
                 <Button 
                   variant="outline" 
-                  className="w-full bg-white/20 border-white/30 text-white hover:bg-white/30"
+                  className="w-full bg-white/90 border-mintari-lav text-mintari-ink hover:bg-mintari-lav/60 hover:scale-105 transition-all font-semibold"
                 >
                   Add Payment Method
                 </Button>
@@ -792,7 +806,7 @@ export default function App() {
             </CardContent>
           </Card>
 
-          <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white border-0">
+          <Button className="w-full bg-peach-dark hover:bg-peach text-white border-0 shadow-vibrant hover:scale-105 transition-all font-semibold">
             <CheckCircle className="w-4 h-4 mr-2" />
             Complete Order - $89
           </Button>
@@ -802,47 +816,47 @@ export default function App() {
   );
 
   const renderGalleryScreen = () => (
-    <div className="min-h-screen bg-soft">
+    <div className="min-h-screen bg-gradient-pastel">
       {renderHeader()}
       
       <div className="p-4 pb-20">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 relative">
             <Sparkle className="top-0 left-1/4" delay={0} />
             <Sparkle className="top-0 right-1/4" delay={500} />
-            <h2 className="font-display text-3xl md:text-4xl font-bold text-mintari-ink mb-4">
+            <h2 className="font-display text-3xl md:text-4xl font-bold text-mintari-ink mb-4 drop-shadow-sm">
               Gallery of Transformations
             </h2>
-            <p className="text-mintari-ink/70 text-lg">See the magic happen ✨</p>
+            <p className="text-mintari-ink/80 text-lg font-medium">See the magic happen ✨</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {collection.map((item) => (
-              <Card key={item.id} className="bg-white/80 backdrop-blur-sm border-mintari-lav shadow-soft">
-                <CardHeader>
-                  <CardTitle className="text-mintari-ink text-center font-display">{item.title}</CardTitle>
+              <Card key={item.id} className="bg-white/90 backdrop-blur-sm border-mintari-lav shadow-vibrant rounded-2xl group hover:scale-105 transition-all duration-300">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-mintari-ink text-center font-display text-sm font-semibold">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="relative group">
-                    <p className="text-mintari-ink/70 text-sm mb-2 text-center">Hover to see transformation</p>
+                    <p className="text-mintari-ink/80 text-xs mb-2 text-center font-medium">Hover to see transformation</p>
                     <div className="relative overflow-hidden rounded-xl">
                       {/* Before Image */}
                       <ImageWithFallback 
                         src={item.originalImage} 
                         alt="Before transformation" 
-                        className="w-full h-48 object-cover rounded-xl shadow-soft transition-opacity duration-500 group-hover:opacity-0"
+                        className="w-full h-32 object-cover rounded-xl shadow-vibrant transition-opacity duration-500 group-hover:opacity-0"
                       />
                       {/* After Image */}
                       <ImageWithFallback 
                         src={item.ghibliFrame} 
                         alt="After transformation" 
-                        className="absolute inset-0 w-full h-48 object-cover rounded-xl shadow-soft"
+                        className="absolute inset-0 w-full h-32 object-cover rounded-xl shadow-vibrant"
                       />
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="text-center">
-                  <p className="text-mintari-ink/70 text-sm w-full">{item.date}</p>
+                <CardFooter className="text-center pt-2">
+                  <p className="text-mintari-ink/80 text-xs w-full font-medium">{item.date}</p>
                 </CardFooter>
               </Card>
             ))}
