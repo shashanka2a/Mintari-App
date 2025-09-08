@@ -89,30 +89,28 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<MintR
   // Validate Ethereum address
   validateEthereumAddress(userAddress);
 
-    // Get assets from database
-    const assets = await prisma.asset.findMany({
-      where: {
-        id: {
-          in: assetIds
-        },
-        userId: userId, // Ensure user owns the assets
+  // Get assets from database
+  const assets = await prisma.asset.findMany({
+    where: {
+      id: {
+        in: assetIds
       },
-      include: {
-        collection: {
-          select: {
-            publicSlug: true,
-          }
+      userId: userId, // Ensure user owns the assets
+    },
+    include: {
+      collection: {
+        select: {
+          publicSlug: true,
         }
       }
-    });
-
-    if (assets.length !== assetIds.length) {
-      return res.status(400).json({
-        success: false,
-        error: 'Some assets not found or access denied',
-        errorCode: 'ASSETS_NOT_FOUND'
-      });
     }
+  });
+
+  if (assets.length !== assetIds.length) {
+    const error = new Error('Some assets not found or access denied');
+    error.name = 'NotFoundError';
+    throw error;
+  }
 
     // Check if assets are already minted (you might want to add a minted flag to the Asset model)
     // For now, we'll skip this check
