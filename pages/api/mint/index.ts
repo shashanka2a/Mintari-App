@@ -112,49 +112,40 @@ async function handler(req: NextApiRequest, res: NextApiResponse): Promise<MintR
     throw error;
   }
 
-    // Check if assets are already minted (you might want to add a minted flag to the Asset model)
-    // For now, we'll skip this check
+  // Check if assets are already minted (you might want to add a minted flag to the Asset model)
+  // For now, we'll skip this check
 
-    // Generate metadata URIs
-    const metadataURIs = assets.map(asset => generateMetadataURI(asset));
+  // Generate metadata URIs
+  const metadataURIs = assets.map(asset => generateMetadataURI(asset));
 
-    // Mint NFTs (mock implementation)
-    const transactionHashes = await mintNFTs(assets, userAddress);
+  // Mint NFTs (mock implementation)
+  const transactionHashes = await mintNFTs(assets, userAddress);
 
-    // Record minting in database (you might want to create an NFTMinting record)
-    for (let i = 0; i < assets.length; i++) {
-      const asset = assets[i];
-      const txHash = transactionHashes[i];
-      const metadataURI = metadataURIs[i];
+  // Record minting in database (you might want to create an NFTMinting record)
+  for (let i = 0; i < assets.length; i++) {
+    const asset = assets[i];
+    const txHash = transactionHashes[i];
+    const metadataURI = metadataURIs[i];
 
-      // Create NFT minting record
-      await prisma.nftMinting.create({
-        data: {
-          userId: userId,
-          assetId: asset.id,
-          tokenId: `0x${Math.random().toString(16).substring(2, 10)}`, // Mock token ID
-          contractAddress: WALLET_CONFIG.CONTRACTS.ERC1155_EDITION,
-          transactionHash: txHash,
-          metadataURI: metadataURI,
-          mintStatus: 'COMPLETED',
-          mintedAt: new Date(),
-        }
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      transactionHashes,
+    // Create NFT minting record
+    await prisma.nftMinting.create({
+      data: {
+        userId: userId,
+        assetId: asset.id,
+        tokenId: `0x${Math.random().toString(16).substring(2, 10)}`, // Mock token ID
+        contractAddress: WALLET_CONFIG.CONTRACTS.ERC1155_EDITION,
+        transactionHash: txHash,
+        metadataURI: metadataURI,
+        mintStatus: 'COMPLETED',
+        mintedAt: new Date(),
+      }
     });
-
-  } catch (error) {
-    console.error('Mint API error:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'Internal server error',
-      errorCode: 'INTERNAL_ERROR'
-    });
-  } finally {
-    await prisma.$disconnect();
   }
+
+  return {
+    success: true,
+    transactionHashes,
+  };
 }
+
+export default withPost(handler);
