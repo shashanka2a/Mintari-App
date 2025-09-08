@@ -1,0 +1,360 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================
+// CORE USER MANAGEMENT
+// =============================================
+
+model User {
+  id                    String    @id @default(cuid())
+  email                 String    @unique
+  username              String?   @unique
+  fullName              String?
+  avatarUrl             String?
+  walletAddress         String?   @unique
+  onboardingCompleted   Boolean   @default(false)
+  isActive              Boolean   @default(true)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  lastLogin             DateTime?
+
+  // Relations
+  sessions              UserSession[]
+  uploads               Upload[]
+  aiGenerations         AIGeneration[]
+  collections           Collection[]
+  nftMintings           NFTMinting[]
+  physicalOrders        PhysicalOrder[]
+  paymentMethods        PaymentMethod[]
+  preferences           UserPreferences?
+  analytics             AppAnalytics[]
+
+  @@map("users")
+}
+
+model UserSession {
+  id          String   @id @default(cuid())
+  userId      String
+  sessionToken String  @unique
+  expiresAt   DateTime
+  deviceInfo  Json?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+// =============================================
+// FILE UPLOAD & PROCESSING
+// =============================================
+
+model Upload {
+  id              String      @id @default(cuid())
+  userId          String
+  originalFilename String
+  filePath        String
+  fileSize        BigInt
+  mimeType        String
+  imageWidth      Int?
+  imageHeight     Int?
+  uploadStatus    UploadStatus @default(PENDING)
+  errorMessage    String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aiGenerations   AIGeneration[]
+  collectionItems CollectionItem[]
+
+  @@map("uploads")
+}
+
+model AIGeneration {
+  id                    String            @id @default(cuid())
+  userId                String
+  uploadId              String
+  generationType        GenerationType    @default(GHIBLI)
+  prompt                String?
+  generationStatus      GenerationStatus  @default(PENDING)
+  progressPercentage    Int               @default(0)
+  errorMessage          String?
+  processingStartedAt   DateTime?
+  processingCompletedAt DateTime?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  // Relations
+  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  upload                Upload            @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  generatedImages       GeneratedImage[]
+
+  @@map("ai_generations")
+}
+
+model GeneratedImage {
+  id                  String    @id @default(cuid())
+  generationId        String
+  imageUrl            String
+  thumbnailUrl        String?
+  imageWidth          Int?
+  imageHeight         Int?
+  fileSize            BigInt?
+  generationVariant   Int       @default(1)
+  isSelected          Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+
+  // Relations
+  generation          AIGeneration @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  nftMintings         NFTMinting[]
+  physicalOrders      PhysicalOrder[]
+  collectionItems     CollectionItem[]
+
+  @@map("generated_images")
+}
+
+// =============================================
+// COLLECTIONS & ORGANIZATION
+// =============================================
+
+model Collection {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  isPublic    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       CollectionItem[]
+
+  @@map("collections")
+}
+
+model CollectionItem {
+  id                String    @id @default(cuid())
+  collectionId      String
+  uploadId          String
+  generatedImageId  String
+  title             String
+  description       String?
+  tags              String[]
+  isFavorite        Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  collection        Collection      @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  upload            Upload          @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  generatedImage    GeneratedImage  @relation(fields: [generatedImageId], references: [id], onDelete: Cascade)
+  nftMintings       NFTMinting[]
+  physicalOrders    PhysicalOrder[]
+
+  @@map("collection_items")
+}
+
+// =============================================
+// NFT MINTING
+// =============================================
+
+model NFTMinting {
+  id                String        @id @default(cuid())
+  userId            String
+  generatedImageId  String
+  collectionItemId  String?
+  mintStatus        MintStatus    @default(PENDING)
+  tokenId           String?
+  contractAddress   String?
+  transactionHash   String?
+  gasFee            Decimal?      @db.Decimal(18, 8)
+  mintPrice         Decimal?      @db.Decimal(18, 8)
+  walletAddress     String?
+  metadataUrl       String?
+  errorMessage      String?
+  mintedAt          DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  // Relations
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generatedImage    GeneratedImage @relation(fields: [generatedImageId], references: [id], onDelete: Cascade)
+  collectionItem    CollectionItem? @relation(fields: [collectionItemId], references: [id], onDelete: Cascade)
+
+  @@map("nft_mintings")
+}
+
+// =============================================
+// PHYSICAL ORDERS & PAYMENTS
+// =============================================
+
+model PhysicalOrder {
+  id                String          @id @default(cuid())
+  userId            String
+  generatedImageId  String
+  collectionItemId  String?
+  orderStatus       OrderStatus     @default(PENDING)
+  frameType         String
+  frameSize         String
+  quantity          Int             @default(1)
+  unitPrice         Decimal         @db.Decimal(10, 2)
+  totalPrice        Decimal         @db.Decimal(10, 2)
+  shippingAddress   Json
+  paymentMethodId   String?
+  paymentStatus     PaymentStatus   @default(PENDING)
+  trackingNumber    String?
+  estimatedDelivery DateTime?
+  actualDelivery    DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  // Relations
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generatedImage    GeneratedImage  @relation(fields: [generatedImageId], references: [id], onDelete: Cascade)
+  collectionItem    CollectionItem? @relation(fields: [collectionItemId], references: [id], onDelete: Cascade)
+  paymentMethod     PaymentMethod?  @relation(fields: [paymentMethodId], references: [id])
+
+  @@map("physical_orders")
+}
+
+model PaymentMethod {
+  id                String          @id @default(cuid())
+  userId            String
+  paymentType       PaymentType
+  provider          String?
+  lastFourDigits    String?
+  cardBrand         String?
+  isDefault         Boolean         @default(false)
+  isActive          Boolean         @default(true)
+  encryptedDetails  Json?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  // Relations
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  physicalOrders    PhysicalOrder[]
+
+  @@map("payment_methods")
+}
+
+// =============================================
+// USER PREFERENCES & SETTINGS
+// =============================================
+
+model UserPreferences {
+  id                        String    @id @default(cuid())
+  userId                    String    @unique
+  defaultGenerationStyle    String    @default("ghibli")
+  autoSaveToCollection      Boolean   @default(true)
+  emailNotifications        Boolean   @default(true)
+  pushNotifications         Boolean   @default(true)
+  marketingEmails           Boolean   @default(false)
+  themePreference           String    @default("light")
+  language                  String    @default("en")
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+
+  // Relations
+  user                      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_preferences")
+}
+
+// =============================================
+// ANALYTICS & TRACKING
+// =============================================
+
+model AppAnalytics {
+  id          String    @id @default(cuid())
+  userId      String?
+  eventType   String
+  screenName  String?
+  eventData   Json?
+  sessionId   String?
+  userAgent   String?
+  ipAddress   String?
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("app_analytics")
+}
+
+model SystemSetting {
+  id          String    @id @default(cuid())
+  settingKey  String    @unique
+  settingValue Json
+  description String?
+  isPublic    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("system_settings")
+}
+
+// =============================================
+// ENUMS
+// =============================================
+
+enum UploadStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum GenerationType {
+  GHIBLI
+  STUDIO_GHIBLI
+  CUSTOM_STYLE
+}
+
+enum GenerationStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum MintStatus {
+  PENDING
+  MINTING
+  COMPLETED
+  FAILED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentType {
+  CREDIT_CARD
+  PAYPAL
+  CRYPTO_WALLET
+  BANK_TRANSFER
+}
