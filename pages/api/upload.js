@@ -1,8 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 import { PrismaClient } from '@prisma/client'
-import { supabaseConfig, uploadConfig } from '../../config/supabase'
 
-const supabase = createClient(supabaseConfig.url, supabaseConfig.serviceRoleKey)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mzmoxjueezoukioswfga.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16bW94anVlZXpvdWtpb3N3ZmdhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzMwNTk4OCwiZXhwIjoyMDcyODgxOTg4fQ.jylJp4xzFOcXTx969LuCIwkNgFtJJFgGmNZ10omliTM'
+)
 const prisma = new PrismaClient()
 
 export default async function handler(req, res) {
@@ -22,7 +24,8 @@ export default async function handler(req, res) {
     }
 
     // Validate file type
-    if (!uploadConfig.allowedMimeTypes.includes(fileType)) {
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png']
+    if (!allowedMimeTypes.includes(fileType)) {
       return res.status(400).json({ 
         error: 'bad_type',
         message: 'Invalid file type. Only JPG and PNG files are allowed.'
@@ -30,7 +33,8 @@ export default async function handler(req, res) {
     }
 
     // Validate file size
-    if (fileSize > uploadConfig.maxFileSize) {
+    const maxFileSize = 10 * 1024 * 1024 // 10MB
+    if (fileSize > maxFileSize) {
       return res.status(400).json({ 
         error: 'too_large',
         message: 'File too large. Maximum size is 10MB.'
@@ -45,14 +49,15 @@ export default async function handler(req, res) {
 
     // Create signed upload URL
     const { data: uploadData, error: uploadError } = await supabase.storage
-      .from(uploadConfig.bucketName)
+      .from('mintari')
       .createSignedUploadUrl(filePath)
 
     if (uploadError) {
       console.error('Supabase upload error:', uploadError)
       return res.status(500).json({ 
         error: 'failed_upload',
-        message: 'Failed to create upload URL. Please try again.'
+        message: `Failed to create upload URL: ${uploadError.message}`,
+        details: uploadError
       })
     }
 

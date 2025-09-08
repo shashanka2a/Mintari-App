@@ -105,7 +105,7 @@ export default function PhotoUpload({ onUploadComplete, userId, maxFiles = 1 }: 
       ))
 
       // Get signed upload URL
-      const response = await fetch('/api/upload', {
+      const response = await fetch('/api/upload/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
