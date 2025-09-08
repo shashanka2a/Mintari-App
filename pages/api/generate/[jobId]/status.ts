@@ -1,7 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '../../../../lib/prisma';
 
 interface StatusResponse {
   success: boolean;
@@ -98,7 +96,5 @@ export default async function handler(
       success: false,
       error: 'Internal server error'
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }

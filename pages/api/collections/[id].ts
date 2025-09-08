@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../lib/prisma';
 import { generateSlug } from '../../../lib/utils/slug';
-
-const prisma = new PrismaClient();
 
 interface UpdateCollectionRequest {
   title?: string;
@@ -255,8 +253,6 @@ export default async function handler(
   } catch (error) {
     console.error('Collection detail API error:', error);
     return res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 

@@ -273,7 +273,5 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         error: 'Failed to load collection',
       },
     };
-  } finally {
-    await prisma.$disconnect();
   }
 };

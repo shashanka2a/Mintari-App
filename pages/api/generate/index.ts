@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../lib/prisma';
 import { 
   GENERATION_CONFIG, 
   ERROR_CODES, 
@@ -15,8 +15,6 @@ import {
   checkContentSafety 
 } from '../../../lib/gen/prompt-assembly';
 import { bananaAPI } from '../../../lib/gen/banana-api';
-
-const prisma = new PrismaClient();
 
 interface GenerateRequest {
   prompt: string;
@@ -217,8 +215,6 @@ export default async function handler(
       error: 'Internal server error',
       errorCode: ERROR_CODES.SERVER_ERROR
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 

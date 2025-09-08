@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../../lib/prisma';
 import { 
   GENERATION_CONFIG, 
   ERROR_CODES, 
@@ -11,8 +11,6 @@ import {
   validatePrompt, 
   checkContentSafety 
 } from '../../../../lib/gen/prompt-assembly';
-
-const prisma = new PrismaClient();
 
 interface RegenerateRequest {
   promptDelta?: string;
@@ -196,8 +194,6 @@ export default async function handler(
       error: 'Internal server error',
       errorCode: ERROR_CODES.SERVER_ERROR
     });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 

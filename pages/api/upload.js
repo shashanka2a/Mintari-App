@@ -1,18 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../../lib/prisma'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mzmoxjueezoukioswfga.supabase.co',
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im16bW94anVlZXpvdWtpb3N3ZmdhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzMwNTk4OCwiZXhwIjoyMDcyODgxOTg4fQ.jylJp4xzFOcXTx969LuCIwkNgFtJJFgGmNZ10omliTM'
 )
-
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL || 'postgresql://postgres.mzmoxjueezoukioswfga:WFgTyBHJkrLmn5B5@aws-1-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1'
-    }
-  }
-})
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -73,12 +65,11 @@ export default async function handler(req, res) {
       const uploadRecord = await prisma.upload.create({
         data: {
           userId: userId,
-          fileName: fileName,
+          originalFilename: fileName,
           filePath: filePath,
-          fileSize: fileSize,
+          fileSize: BigInt(fileSize),
           mimeType: fileType,
-          status: 'PENDING',
-          uploadUrl: uploadData.signedUrl
+          uploadStatus: 'PENDING'
         }
       })
 
@@ -109,8 +100,6 @@ export default async function handler(req, res) {
       error: 'failed_upload',
       message: 'Internal server error. Please try again.'
     })
-  } finally {
-    await prisma.$disconnect()
   }
 }
 

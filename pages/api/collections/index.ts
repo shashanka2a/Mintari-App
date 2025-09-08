@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../lib/prisma';
 import { generateSlug } from '../../../lib/utils/slug';
-
-const prisma = new PrismaClient();
 
 interface CreateCollectionRequest {
   title: string;

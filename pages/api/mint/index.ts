@@ -1,10 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../../../lib/prisma';
 import { WALLET_CONFIG } from '../../../lib/config/wallet';
 import { withPost, validateRequired, validateEthereumAddress, requireAuth } from '../../../lib/api/apiWrapper';
 import { MintRequest, MintResponse, ApiErrorCode } from '../../../lib/types/api';
-
-const prisma = new PrismaClient();
 
 // Mock NFT minting function (replace with actual contract interaction)
 async function mintNFTs(assets: any[], userAddress: string): Promise<string[]> {
