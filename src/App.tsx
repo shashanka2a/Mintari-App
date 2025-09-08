@@ -174,7 +174,7 @@ export default function App() {
       // Create a prompt based on the uploaded image
       const prompt = `Transform this photo into Studio Ghibli style artwork: ${uploadedImage}`;
       
-      // Start real AI generation using Banana API
+      // Start real AI generation using Google Gemini API
       await startGeneration(
         prompt,
         'ghibli',
@@ -182,6 +182,9 @@ export default function App() {
         uploadedImage, // Pass the uploaded image URL
         userId
       );
+      
+      // Navigate to generation screen to show progress
+      navigate('generation');
       
     } catch (err) {
       console.error('Generation error:', err);
@@ -444,8 +447,7 @@ export default function App() {
     const handleUploadComplete = (filePath: string, uploadId: string) => {
       // Set the uploaded image URL (in a real app, this would be the Supabase URL)
       setUploadedImage(filePath);
-      // Navigate to generation screen
-      setCurrentScreen('generation');
+      // Stay on upload screen to show generate button
     };
 
     return (
@@ -480,28 +482,31 @@ export default function App() {
                   </CardContent>
                 </Card>
                 
-                <div className="flex gap-3">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setUploadedImage(null)}
-                    className="flex-1 bg-white/90 border-mintari-lav text-mintari-ink hover:bg-mintari-lav/60 hover:scale-105 transition-all font-semibold"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Remove
-                  </Button>
+                <div className="space-y-3">
                   <Button 
                     onClick={generateGhibliFrames}
                     disabled={isGenerating}
-                    className="flex-1 bg-pink-dark hover:bg-pink text-white border-0 disabled:opacity-50 shadow-glow hover:scale-105 transition-all font-semibold"
+                    className="w-full bg-pink-dark hover:bg-pink text-white border-0 disabled:opacity-50 shadow-glow hover:scale-105 transition-all font-semibold text-lg py-3"
                   >
                     {isGenerating ? (
                       <div className="flex items-center gap-2">
-                        <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
-                        Generating...
+                        <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
+                        Generating Magic...
                       </div>
                     ) : (
-                      "Generate Ghibli Art"
+                      <>
+                        <Palette className="w-5 h-5 mr-2" />
+                        Transform to Ghibli Art
+                      </>
                     )}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setUploadedImage(null)}
+                    className="w-full bg-white/90 border-mintari-lav text-mintari-ink hover:bg-mintari-lav/60 hover:scale-105 transition-all font-semibold"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Remove Photo
                   </Button>
                 </div>
               </div>
@@ -600,13 +605,34 @@ export default function App() {
               </div>
               <h3 className="text-lg font-semibold text-mintari-ink mb-3">No Ghibli moments yet</h3>
               <p className="text-mintari-ink/70 mb-6">Upload a photo and transform it into magical Studio Ghibli artwork!</p>
-              <Button 
-                onClick={() => navigate('upload')}
-                className="bg-lavender-dark hover:bg-lavender text-white border-0 shadow-vibrant hover:scale-105 transition-all font-semibold"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Photo
-              </Button>
+              <div className="space-y-3">
+                <Button 
+                  onClick={() => navigate('upload')}
+                  className="w-full bg-lavender-dark hover:bg-lavender text-white border-0 shadow-vibrant hover:scale-105 transition-all font-semibold"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload Photo
+                </Button>
+                {uploadedImage && (
+                  <Button 
+                    onClick={generateGhibliFrames}
+                    disabled={isGenerating}
+                    className="w-full bg-pink-dark hover:bg-pink text-white border-0 disabled:opacity-50 shadow-glow hover:scale-105 transition-all font-semibold"
+                  >
+                    {isGenerating ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                        Generating...
+                      </div>
+                    ) : (
+                      <>
+                        <Palette className="w-4 h-4 mr-2" />
+                        Generate from Uploaded Photo
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
           )}
 
